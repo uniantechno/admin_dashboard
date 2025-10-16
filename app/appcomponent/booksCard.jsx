@@ -22,7 +22,7 @@ function formatCurrency(value) {
 export function BookCard({ book, onBookUpdated,setLoading ,setError,setBooks}) {
   const { title, description, price, coverImage, pdffile } = book;
   const fallbackImage = "/abstract-book-cover.png";
-  const displayPrice = formatCurrency(price);
+  const displayPrice = price
   // const [loading, setLoading] = useState(true)
   // const [error, setError] = useState(null);
 
@@ -63,7 +63,7 @@ export function BookCard({ book, onBookUpdated,setLoading ,setError,setBooks}) {
           <h2 className="font-medium text-pretty">{title}</h2>
           {displayPrice && (
             <p className="text-sm text-muted-foreground mt-1">
-              {displayPrice}
+              ₹{displayPrice}
             </p>
           )}
         </div>
