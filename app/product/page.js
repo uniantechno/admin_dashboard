@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import ProductFormDialog from "./_components/product-form-dialog"
 import { config } from "@/config"
 import axios from "axios"
+import Link from "next/link"
 
 const ProductPage = () => {
   const [products, setProducts] = useState([])
@@ -121,6 +122,9 @@ const ProductPage = () => {
                 )}
                 </div>
                 <div className="flex flex-col gap-2 items-end">
+                <Button asChild size="sm" variant="secondary" aria-label={`View ${title}`}>
+                      <Link href={`/product/productditails/${id}`}>View</Link>
+                    </Button>
                 <ProductFormDialog mode="edit" productId={id} initial={p} asIcon />
                 <Button
                   variant="ghost"
