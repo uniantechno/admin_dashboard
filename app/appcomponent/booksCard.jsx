@@ -1,6 +1,10 @@
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import BookFormDialog from "../books/_components/book-form-dialog";
+import { config } from "../../config";
+import axios from "axios" // ✅ New import
+
 
 
 function formatCurrency(value) {
@@ -15,10 +19,32 @@ function formatCurrency(value) {
   }
 }
 
-export function BookCard({ book, onBookUpdated }) {
+export function BookCard({ book, onBookUpdated,setLoading ,setError,setBooks}) {
   const { title, description, price, coverImage, pdffile } = book;
   const fallbackImage = "/abstract-book-cover.png";
   const displayPrice = formatCurrency(price);
+  // const [loading, setLoading] = useState(true)
+  // const [error, setError] = useState(null);
+
+
+
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    try {
+      console.log(book?.id,"bookid");
+      
+      setLoading(true);
+      setError(null);
+      const baseURL = config.baseUrl || "http://localhost:3000";
+      await axios.delete(`${baseURL}/deletebook/${book?.id}`);
+      setBooks(prev => prev.filter(item => (item.id ?? item._id ?? idx) !== book?.id));
+    } catch (err) {
+      setError("Failed to delete product. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <article
@@ -68,7 +94,7 @@ export function BookCard({ book, onBookUpdated }) {
           )}
 
           <div className="flex flex-row gap-2 items-center">
-           {console.log(book?.id,book,"book")}
+            {console.log(book?.id, book, "book")}
             <BookFormDialog
               mode="edit"
               bookId={book?.id}
@@ -78,7 +104,13 @@ export function BookCard({ book, onBookUpdated }) {
             />
 
 
-            <Button variant="ghost" size="icon" aria-label="Delete product" className="hover:text-red-500 text-muted-foreground">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Delete product"
+              className="hover:text-red-500 text-muted-foreground"
+              onClick={handleDelete}
+            >
               <svg
                 width="20"
                 height="20"

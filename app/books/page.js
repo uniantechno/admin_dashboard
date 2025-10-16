@@ -12,6 +12,7 @@ const BooksPage = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
 
   const fetchBooks = async () => {
     const baseURL = config.baseUrl || "http://localhost:3000";
@@ -75,6 +76,9 @@ const BooksPage = () => {
                 pdffile: b.pdffile,
               }}
               onBookUpdated={fetchBooks}
+              setLoading={setLoading}
+              setError={setError}
+              setBooks={setBooks}
             />
           ))}
 

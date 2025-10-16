@@ -19,9 +19,6 @@ function normalizeInitial(p = {}) {
 }
 
 export default function ProductFormDialog({ mode = "create", productId, initial, asIcon = false, className }) {
-  console.log('====================================');
-  console.log(productId,"productid");
-  console.log('====================================');
   const router = useRouter()
   const [open, setOpen] = React.useState(false)
   const [pending, startTransition] = React.useTransition()
