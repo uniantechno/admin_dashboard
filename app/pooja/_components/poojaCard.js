@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import BookFormDialog from "../books/_components/book-form-dialog";
-import { config } from "../../config";
+import PoojaFormDialog from "../_components/pooja-form-dialog"
+import { config } from "../../../config";
 import axios from "axios" // ✅ New import
 
 
 
-export function BookCard({ book, onBookUpdated,setLoading ,setError,setBooks}) {
+export function PoojaCard({ book, onBookUpdated,setLoading ,setError,setBooks}) {
   const { title, description, price, coverImage, pdffile } = book;
   const fallbackImage = "/abstract-book-cover.png";
   const displayPrice = price
@@ -21,8 +21,8 @@ export function BookCard({ book, onBookUpdated,setLoading ,setError,setBooks}) {
       
       setLoading(true);
       setError(null);
-      const baseURL = config.baseUrl || "http://localhost:3000";
-      await axios.delete(`${baseURL}/deletebook/${book?.id}`);
+      const baseURL = config.adminUrl || "http://localhost:3000";
+      await axios.delete(`${baseURL}/pooja/${book?.id}`);
       setBooks(prev => prev.filter(item => (item.id ?? item._id ?? idx) !== book?.id));
     } catch (err) {
       setError("Failed to delete product. Please try again.");
@@ -36,13 +36,13 @@ export function BookCard({ book, onBookUpdated,setLoading ,setError,setBooks}) {
       className="rounded-lg border border-border overflow-hidden bg-card text-card-foreground"
       aria-label={`Book: ${title}`}
     >
-      <div className="aspect-[3/2] bg-muted">
+      {/* <div className="aspect-[3/2] bg-muted">
         <img
           src={coverImage || fallbackImage}
           alt={`${title} cover`}
           className="h-full w-full object-cover"
         />
-      </div>
+      </div> */}
       <div className="p-4 flex flex-col gap-3">
         <div>
           <h2 className="font-medium text-pretty">{title}</h2>
@@ -66,7 +66,7 @@ export function BookCard({ book, onBookUpdated,setLoading ,setError,setBooks}) {
           </p>
         ) : null}
         <div className="flex items-center gap-2 mt-1">
-          {pdffile ? (
+          {/* {pdffile ? (
             <Button size="sm" variant="secondary" asChild>
               <a href={pdffile} target="_blank" rel="noopener noreferrer">
                 Read PDF
@@ -76,11 +76,11 @@ export function BookCard({ book, onBookUpdated,setLoading ,setError,setBooks}) {
             <Button size="sm" variant="secondary" disabled>
               PDF Unavailable
             </Button>
-          )}
+          )} */}
 
           <div className="flex flex-row gap-2 items-center">
             {console.log(book?.id, book, "book")}
-            <BookFormDialog
+            <PoojaFormDialog
               mode="edit"
               bookId={book?.id}
               initial={book}
