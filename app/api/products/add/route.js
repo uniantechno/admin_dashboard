@@ -2,7 +2,7 @@ export async function POST(req) {
   try {
     const formData = await req.formData()
 
-    const upstream = await fetch("https://tantratalk.in/apiV1/backend/addproducts", {
+    const upstream = await fetch("https://tantratalk.in/admin/addproducts", {
       method: "POST",
       body: formData, // keep multipart/mixed boundary
     })

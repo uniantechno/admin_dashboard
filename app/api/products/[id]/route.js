@@ -3,7 +3,7 @@ export async function PUT(req, context) {
     const { id } = await context.params // ✅ must await here
     const formData = await req.formData()
 
-    const upstream = await fetch(`https://tantratalk.in/apiV1/backend/updateproducts/${id}`, {
+    const upstream = await fetch(`https://tantratalk.in/admin/updateproducts/${id}`, {
       method: "PUT",
       body: formData,
     })

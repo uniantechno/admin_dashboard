@@ -1,7 +1,7 @@
 export async function GET() {
   try {
     console.log("👉 Fetching from Tantra API...");
-    const response = await fetch("https://tantratalk.in/apiV1/backend/products", {
+    const response = await fetch("https://tantratalk.in/admin/products", {
       cache: "no-store",
     });
 

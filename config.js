@@ -1,1 +1,1 @@
-export const config = {baseUrl: "https://tantratalk.in/apiV1/backend" }
+export const config = {baseUrl: "https://tantratalk.in/admin",}
