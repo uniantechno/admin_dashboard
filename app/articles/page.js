@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArticleFormDialog } from "./_components/article-form-dialog"
+import { config } from "@/config"
 
 export default function ArticlesPage() {
   const [articles, setArticles] = useState([])
@@ -17,10 +18,12 @@ export default function ArticlesPage() {
     fetchArticles()
   }, [])
 
+  console.log("baseURL:", config.adminUrl);
+
   const fetchArticles = async () => {
     try {
       setLoading(true)
-      const res = await fetch("/api/articles")
+      const res = await fetch(`${config.adminUrl}/tips`, { method: "GET" })
       const data = await res.json()
       if (!res.ok) throw new Error(data.message || "Failed to fetch articles")
       setArticles(data.data || data.items || [])
@@ -34,7 +37,7 @@ export default function ArticlesPage() {
   const handleDelete = async (id) => {
     if (!confirm("Are you sure?")) return
     try {
-      const res = await fetch(`/api/articles/${id}`, { method: "DELETE" })
+      const res = await fetch(`${config.adminUrl}/tips/${id}`, { method: "DELETE" })
       if (!res.ok) throw new Error("Failed to delete")
       setArticles((prev) => prev.filter((a) => (a._id || a.id) !== id))
     } catch (err) {

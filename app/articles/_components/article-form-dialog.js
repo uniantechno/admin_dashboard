@@ -16,17 +16,22 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
     coverImage: null,
   })
 
+  // ✅ Prefill only when dialog opens
   useEffect(() => {
-    if (article) {
-      setFormData({
-        title: article.title || "",
-        description: article.description || "",
-        coverImage: null,
-      })
-    } else {
-      setFormData({ title: "", description: "", coverImage: null })
+    if (open) {
+      if (article) {
+        // Edit mode
+        setFormData({
+          title: article.title || "",
+          description: article.description || "",
+          coverImage: null,
+        })
+      } else {
+        // Create mode
+        setFormData({ title: "", description: "", coverImage: null })
+      }
     }
-  }, [article])
+  }, [open, article])
 
   const handleChange = (e) => {
     const { name, value, files } = e.target
@@ -59,7 +64,6 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
 
       if (!res.ok || !result.success) throw new Error(result.message || "Save failed")
 
-      // ✅ Return the new/updated article to parent
       onSuccess?.(result.data)
       onOpenChange(false)
     } catch (err) {
@@ -107,7 +111,11 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
             <Input type="file" name="coverImage" accept="image/*" onChange={handleChange} />
             {article?.coverImage && (
               <img
-                src={`${config.articleUrl || "http://localhost:3000"}/uploads/${article.coverImage}`}
+                src={
+                  article.coverImage.startsWith("http")
+                    ? article.coverImage
+                    : `${config.articleUrl || "http://localhost:3000"}/uploads/${article.coverImage}`
+                }
                 alt="cover"
                 className="mt-2 w-24 h-24 object-cover rounded border"
               />

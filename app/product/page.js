@@ -87,7 +87,7 @@ const ProductPage = () => {
               try {
               setLoading(true);
               setError(null);
-              const baseURL = config.baseUrl || "http://localhost:3000";
+              const baseURL = config.adminUrl || "http://localhost:3000";
               await axios.delete(`${baseURL}/deleteproduct/${id}`);
               setProducts(prev => prev.filter(item => (item.id ?? item._id ?? idx) !== id));
               } catch (err) {

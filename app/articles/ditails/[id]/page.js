@@ -7,7 +7,10 @@ async function getArticle(id) {
       cache: "no-store",
     })
     if (!res.ok) throw new Error("Failed to fetch article")
-    return await res.json()
+
+    const json = await res.json()
+    // ✅ Return only the actual data object
+    return json.data || null
   } catch (error) {
     console.error("[v0] getArticle error:", error.message)
     return null
