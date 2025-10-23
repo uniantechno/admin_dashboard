@@ -48,7 +48,7 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
       form.append("description", formData.description)
       if (formData.coverImage) form.append("coverImage", formData.coverImage)
 
-      const baseURL = config.baseUrl || "http://localhost:3000"
+      const baseURL = config.adminUrl || "http://localhost:3000"
       const endpoint = article
         ? `${baseURL}/edittip/${article._id || article.id}`
         : `${baseURL}/addtip`

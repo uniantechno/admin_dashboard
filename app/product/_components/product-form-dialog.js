@@ -43,7 +43,7 @@ export default function ProductFormDialog({ mode = "create", productId, initial,
       fd.set("image", imageFile)
     }
 
-    const url = mode === "create" ? `${config.baseUrl}/addproduct` : `${config.baseUrl}/updateproduct/${productId}`
+    const url = mode === "create" ? `${config.adminUrl}/addproduct` : `${config.adminUrl}/updateproduct/${productId}`
 
     const res = await fetch(url, {
       method: mode === "create" ? "POST" : "PUT",

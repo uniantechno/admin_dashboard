@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 async function getProductDetails(id) {
-  const url = `https://tantratalk.in/apiV1/backend/products-details/${id}`
+  const url = `https://tantratalk.in/admin/products-details/${id}`
   const res = await fetch(url, { cache: "no-store" })
 
   let payload = null

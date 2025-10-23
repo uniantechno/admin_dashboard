@@ -13,7 +13,7 @@ const ProductPage = () => {
   const [error, setError] = useState(null)
 
   const fetchProducts = async () => {
-    const baseURL = config.baseUrl || "http://localhost:3000"
+    const baseURL = config.adminUrl || "http://localhost:3000"
     const url = `${baseURL}/products` // ✅ should point to your API route
     console.log("Fetching products from:", url)
 
