@@ -48,8 +48,8 @@ const BookFormDialog = ({ mode = "create", bookId, initial, asIcon = false, clas
         console.log(form.title, form.description, form.price, imageFile, pdfFile, "jjjjjjjjj");
         const url =
             mode === "create"
-                ? `${config.baseUrl}/addbook`
-                : `${config.baseUrl}/updatebook/${bookId}`
+                ? `${config.adminUrl}/addbook`
+                : `${config.adminUrl}/updatebook/${bookId}`
 
         try {
             if (mode === "create") {

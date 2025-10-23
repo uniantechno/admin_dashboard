@@ -41,7 +41,7 @@ const Pooja = () => {
     <main className="p-6 bg-background text-foreground">
       <header className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-pretty">Books</h1>
+          <h1 className="text-2xl font-semibold text-pretty">Poojas</h1>
           <p className="text-sm text-muted-foreground">
             {books.length} item{books.length === 1 ? "" : "s"}f
           </p>
@@ -73,7 +73,7 @@ const Pooja = () => {
                 id: b._id,
                 title: b.title,
                 description: b.description,
-                price: b.price,
+                amount: b.amount,
                 coverImage: b.coverImage,
                 pdffile: b.pdffile,
               }}

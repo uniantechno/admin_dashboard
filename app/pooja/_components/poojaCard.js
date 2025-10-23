@@ -8,9 +8,9 @@ import axios from "axios" // ✅ New import
 
 
 export function PoojaCard({ book, onBookUpdated,setLoading ,setError,setBooks}) {
-  const { title, description, price, coverImage, pdffile } = book;
+  const { title, description, amount, coverImage, pdffile } = book;
   const fallbackImage = "/abstract-book-cover.png";
-  const displayPrice = price
+  const displayPrice = amount
   // const [loading, setLoading] = useState(true)
   // const [error, setError] = useState(null);
 

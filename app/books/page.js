@@ -12,10 +12,10 @@ const BooksPage = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
 
   const fetchBooks = async () => {
-    const baseURL = config.baseUrl || "http://localhost:3000";
+    const baseURL = config.adminUrl || "http://locaslhost:3000";
     const url = `${baseURL}/books`;
 
     try {

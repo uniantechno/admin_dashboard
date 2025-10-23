@@ -21,7 +21,7 @@ export function BookCard({ book, onBookUpdated,setLoading ,setError,setBooks}) {
       
       setLoading(true);
       setError(null);
-      const baseURL = config.baseUrl || "http://localhost:3000";
+      const baseURL = config.adminUrl || "http://localhost:3000";
       await axios.delete(`${baseURL}/deletebook/${book?.id}`);
       setBooks(prev => prev.filter(item => (item.id ?? item._id ?? idx) !== book?.id));
     } catch (err) {
