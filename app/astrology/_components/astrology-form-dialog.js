@@ -15,6 +15,7 @@ export function AstrologyFormDialog({ open, onOpenChange, editingData, onSuccess
     email: "",
     phoneNumber: "",
     password: "",
+    isActive: true, // added for edit form
   })
 
   const baseUrl = config.astroUrl
@@ -26,7 +27,8 @@ export function AstrologyFormDialog({ open, onOpenChange, editingData, onSuccess
         name: editingData.name || "",
         email: editingData.email || "",
         phoneNumber: editingData.phoneNumber || "",
-        password: "", // blank for security
+        password: "",
+        isActive: editingData.isActive ?? true, // default true
       })
     } else {
       setFormData({
@@ -34,6 +36,7 @@ export function AstrologyFormDialog({ open, onOpenChange, editingData, onSuccess
         email: "",
         phoneNumber: "",
         password: "",
+        isActive: true,
       })
     }
   }, [editingData])
@@ -50,11 +53,22 @@ export function AstrologyFormDialog({ open, onOpenChange, editingData, onSuccess
 
     try {
       const endpoint = editingData
-        ? `${baseUrl}/editprofile/${editingData.id}`
+        ? `${baseUrl}/editprofile/${editingData._id}`
         : `${baseUrl}/register`
 
-      const method = "POST" // both register & edit use POST in your API
-      const payload = formData
+      const method = editingData ? "PUT" : "POST"
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        ...(formData.password ? { password: formData.password } : {}),
+        ...(editingData ? { isActive: formData.isActive } : {}), // only for edit
+      }
+
+      // Remove password if editing and left blank
+      if (editingData && !formData.password) {
+        delete payload.password
+      }
 
       const res = await fetch(endpoint, {
         method,
@@ -77,6 +91,7 @@ export function AstrologyFormDialog({ open, onOpenChange, editingData, onSuccess
         email: "",
         phoneNumber: "",
         password: "",
+        isActive: true,
       })
     } catch (err) {
       console.error("Form submit error:", err)
@@ -94,9 +109,7 @@ export function AstrologyFormDialog({ open, onOpenChange, editingData, onSuccess
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">{error}</div>
-          )}
+          {error && <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">{error}</div>}
 
           <div>
             <Label htmlFor="name">Name</Label>
@@ -135,18 +148,52 @@ export function AstrologyFormDialog({ open, onOpenChange, editingData, onSuccess
             />
           </div>
 
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder={editingData ? "Leave blank to keep existing" : "Enter password"}
-              required={!editingData} // only required on create
-            />
-          </div>
+          {/* 🔒 Show password only when creating */}
+          {!editingData && (
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="Enter password"
+              />
+            </div>
+          )}
+
+          {/* 🟢 isActive field only for Edit mode */}
+          {editingData && (
+            <div>
+              <Label htmlFor="isActive">Status</Label>
+              <select
+                id="isActive"
+                name="isActive"
+                value={formData.isActive ? "true" : "false"} // ✅ convert boolean to string
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    isActive: e.target.value === "true", // ✅ convert string back to boolean
+                  }))
+                }
+                className={`w-full border rounded-md p-2 ${formData.isActive ? "bg-gray-100 cursor-not-allowed" : ""
+                  }`}
+                disabled={formData.isActive} // ✅ disable when active
+              >
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+              </select>
+
+              {formData.isActive && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Status cannot be changed while astrologer is active.
+                </p>
+              )}
+            </div>
+          )}
+
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

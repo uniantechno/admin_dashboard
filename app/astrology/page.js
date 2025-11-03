@@ -47,47 +47,54 @@ export default function AstrologyPage() {
 
   // ✅ DELETE ASTROLOGER
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this astrologer?")) return
+    if (!window.confirm("Are you sure you want to delete this astrologer?")) return;
 
     try {
-      setDeleting(id)
+      setDeleting(id);
+
       const res = await fetch(`${baseUrl}/deleteprofile/${id}`, {
         method: "DELETE",
-      })
+      });
 
-      if (!res.ok) throw new Error("Failed to delete astrologer")
-      await fetchAstrologers()
-    } catch (err) {
-      console.log("[v0] Delete error:", err.message)
-      alert("Failed to delete: " + err.message)
-    } finally {
-      setDeleting(null)
-    }
-  }
-
-  // ✅ Only activate inactive astrologers
-  const handleStatusChange = async (astrologer) => {
-    try {
-      if (astrologer.isActive) {
-        alert("Active astrologers cannot be deactivated.")
-        return
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || "Failed to delete astrologer");
       }
 
-      const updatedStatus = true
-
-      const res = await fetch(`${baseUrl}/editprofile/${astrologer._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive: updatedStatus }),
-      })
-
-      if (!res.ok) throw new Error("Failed to update status")
-      await fetchAstrologers()
+      alert("Astrologer deleted successfully!");
+      await fetchAstrologers();
     } catch (err) {
-      console.log("[v0] Status change error:", err.message)
-      alert("Failed to change status: " + err.message)
+      console.error("[v0] Delete error:", err.message);
+      alert("Failed to delete: " + err.message);
+    } finally {
+      setDeleting(null);
     }
-  }
+  };
+
+
+  // ✅ Only activate inactive astrologers
+  // const handleStatusChange = async (astrologer) => {
+  //   try {
+  //     if (astrologer.isActive) {
+  //       alert("Active astrologers cannot be deactivated.")
+  //       return
+  //     }
+
+  //     const updatedStatus = true
+
+  //     const res = await fetch(`${baseUrl}/editprofile/${astrologer._id}`, {
+  //       method: "PUT",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ isActive: updatedStatus }),
+  //     })
+
+  //     if (!res.ok) throw new Error("Failed to update status")
+  //     await fetchAstrologers()
+  //   } catch (err) {
+  //     console.log("[v0] Status change error:", err.message)
+  //     alert("Failed to change status: " + err.message)
+  //   }
+  // }
 
   if (loading) return <div className="p-6">Loading astrologers...</div>
 
@@ -126,15 +133,17 @@ export default function AstrologyPage() {
                   <TableCell>{astrologer.email || "N/A"}</TableCell>
                   <TableCell>{astrologer.phoneNumber || "N/A"}</TableCell>
                   <TableCell>{astrologer.credits || 0}</TableCell>
+
+                  {/* ✅ Just show text instead of button */}
                   <TableCell>
-                    <Button
-                      variant={astrologer.isActive ? "default" : "destructive"}
-                      size="sm"
-                      onClick={() => handleStatusChange(astrologer)}
+                    <span
+                      className={`font-medium ${astrologer.isActive ? "text-green-600" : "text-red-600"
+                        }`}
                     >
                       {astrologer.isActive ? "Active" : "Inactive"}
-                    </Button>
+                    </span>
                   </TableCell>
+
                   <TableCell className="space-x-2">
                     <Button variant="outline" size="sm" onClick={() => handleEdit(astrologer)}>
                       Edit
@@ -147,11 +156,13 @@ export default function AstrologyPage() {
                     >
                       {deleting === astrologer._id ? "Deleting..." : "Delete"}
                     </Button>
+
                   </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
+
         </Table>
       </div>
 
