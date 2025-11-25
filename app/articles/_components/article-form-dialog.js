@@ -13,6 +13,7 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    tips: "",
     coverImage: null,
   })
 
@@ -24,11 +25,12 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
         setFormData({
           title: article.title || "",
           description: article.description || "",
+          tips: article.tips || "",
           coverImage: null,
         })
       } else {
         // Create mode
-        setFormData({ title: "", description: "", coverImage: null })
+        setFormData({ title: "", description: "", tips: "", coverImage: null })
       }
     }
   }, [open, article])
@@ -51,6 +53,7 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
       const form = new FormData()
       form.append("title", formData.title)
       form.append("description", formData.description)
+      form.append("tips", formData.tips)
       if (formData.coverImage) form.append("coverImage", formData.coverImage)
 
       const baseURL = config.adminUrl || "http://localhost:3000"
@@ -101,6 +104,18 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
               value={formData.description}
               onChange={handleChange}
               placeholder="Enter description"
+              rows={4}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Tips</label>
+            <Textarea
+              name="tips"
+              value={formData.tips}
+              onChange={handleChange}
+              placeholder="Enter tips"
               rows={4}
               required
             />

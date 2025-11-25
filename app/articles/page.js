@@ -104,7 +104,15 @@ export default function ArticlesPage() {
                   <CardTitle>{article.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">{article.description}</p>
+                  <p className="text-sm text-gray-600 mb-2">{article.description}</p>
+                  {article.tips && (
+                    <>
+                     <h2 className="text-sm font-semibold mb-1">Tips:</h2>
+                    <p className="text-sm text-gray-500 mb-4 whitespace-pre-wrap">
+                      {article.tips.length > 120 ? article.tips.slice(0, 120) + "..." : article.tips}
+                    </p>
+                    </>
+                  )}
                   <div className="flex gap-2">
                     <Link href={`/articles/ditails/${id}`}>
                       <Button variant="outline" size="sm">View</Button>

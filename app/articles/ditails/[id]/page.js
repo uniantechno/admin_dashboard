@@ -42,7 +42,13 @@ export default async function ArticleDetailsPage({ params }) {
         />
       )}
       <h1 className="text-4xl font-bold mb-4">{article.title}</h1>
-      <p className="text-gray-600 whitespace-pre-wrap mb-8">{article.description}</p>
+      <p className="text-gray-600 whitespace-pre-wrap mb-4">{article.description}</p>
+      {article.tips && (
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold mb-2">Tips</h2>
+          <p className="text-gray-600 whitespace-pre-wrap">{article.tips}</p>
+        </div>
+      )}
       <Link href="/articles">
         <Button>Back to Articles</Button>
       </Link>
