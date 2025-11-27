@@ -80,6 +80,17 @@ export default function AdminDashboard() {
             </Button>
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Remedies</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-3">
+            <p className="text-sm text-muted-foreground">{"Manage remedies list and details."}</p>
+            <Button asChild>
+              <Link href="/remedy">Open</Link>
+            </Button>
+          </CardContent>
+        </Card>
       </section>
     </main>
   )
