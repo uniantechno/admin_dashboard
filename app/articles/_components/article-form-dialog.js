@@ -13,7 +13,6 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    tips: "",
     coverImage: null,
   })
 
@@ -25,12 +24,11 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
         setFormData({
           title: article.title || "",
           description: article.description || "",
-          tips: article.tips || "",
           coverImage: null,
         })
       } else {
         // Create mode
-        setFormData({ title: "", description: "", tips: "", coverImage: null })
+        setFormData({ title: "", description: "",  coverImage: null })
       }
     }
   }, [open, article])
@@ -53,13 +51,12 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
       const form = new FormData()
       form.append("title", formData.title)
       form.append("description", formData.description)
-      form.append("tips", formData.tips)
       if (formData.coverImage) form.append("coverImage", formData.coverImage)
 
       const baseURL = config.adminUrl || "http://localhost:3000"
       const endpoint = article
-        ? `${baseURL}/edittip/${article._id || article.id}`
-        : `${baseURL}/addtip`
+        ? `${baseURL}/editarticle/${article._id || article.id}`
+        : `${baseURL}/addarticle`
       const method = article ? "PUT" : "POST"
 
       const res = await fetch(endpoint, { method, body: form })
@@ -109,7 +106,7 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
             />
           </div>
 
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-1">Tips</label>
             <Textarea
               name="tips"
@@ -119,7 +116,7 @@ export function ArticleFormDialog({ open, onOpenChange, article = null, onSucces
               rows={4}
               required
             />
-          </div>
+          </div> */}
 
           <div>
             <label className="block text-sm font-medium mb-1">Cover Image</label>

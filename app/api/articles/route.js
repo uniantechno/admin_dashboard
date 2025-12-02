@@ -3,7 +3,7 @@ import axios from "axios";
 export async function GET() {
   try {
     const { default: axios } = await import("axios");
-    const axiosRes = await axios.get("https://tantratalk.in/admin/tips", {
+    const axiosRes = await axios.get("https://tantratalk.in/admin/articles", {
       headers: { "Cache-Control": "no-store" },
     });
     const res = {

@@ -23,7 +23,7 @@ export default function ArticlesPage() {
   const fetchArticles = async () => {
     try {
       setLoading(true)
-      const res = await fetch(`${config.adminUrl}/tips`, { method: "GET" })
+      const res = await fetch(`${config.adminUrl}/articles`, { method: "GET" })
       const data = await res.json()
       if (!res.ok) throw new Error(data.message || "Failed to fetch articles")
       setArticles(data.data || data.items || [])
@@ -37,7 +37,7 @@ export default function ArticlesPage() {
   const handleDelete = async (id) => {
     if (!confirm("Are you sure?")) return
     try {
-      const res = await fetch(`${config.adminUrl}/tips/${id}`, { method: "DELETE" })
+      const res = await fetch(`${config.adminUrl}/articles/${id}`, { method: "DELETE" })
       if (!res.ok) throw new Error("Failed to delete")
       setArticles((prev) => prev.filter((a) => (a._id || a.id) !== id))
     } catch (err) {

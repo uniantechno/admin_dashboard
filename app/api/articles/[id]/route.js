@@ -1,7 +1,7 @@
 export async function GET(req, { params }) {
   try {
     const { id } = await params
-    const res = await fetch(`https://tantratalk.in/admin/tips/${id}`, {
+    const res = await fetch(`https://tantratalk.in/admin/articles/${id}`, {
       cache: "no-store",
     })
     if (!res.ok) throw new Error(`Upstream error: ${res.status}`)
@@ -17,7 +17,7 @@ export async function PUT(req, { params }) {
   try {
     const { id } = await params
     const formData = await req.formData()
-    const res = await fetch(`https://tantratalk.in/admin/edittip/${id}`, {
+    const res = await fetch(`https://tantratalk.in/admin/editarticle/${id}`, {
       method: "PUT",
       body: formData,
     })
@@ -33,7 +33,7 @@ export async function PUT(req, { params }) {
 export async function DELETE(req, { params }) {
   try {
     const { id } = await params
-    const res = await fetch(`https://tantratalk.in/admin/tips/${id}`, {
+    const res = await fetch(`https://tantratalk.in/admin/articles/${id}`, {
       method: "DELETE",
     })
     if (!res.ok) throw new Error(`Upstream error: ${res.status}`)

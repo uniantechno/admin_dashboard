@@ -1,7 +1,7 @@
 export async function POST(req) {
   try {
     const formData = await req.formData()
-    const res = await fetch("https://tantratalk.in/admin/addtip", {
+    const res = await fetch("https://tantratalk.in/admin/addarticle", {
       method: "POST",
       body: formData,
     })

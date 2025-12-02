@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 
 async function getArticle(id) {
   try {
-    const res = await fetch(`https://tantratalk.in/admin/tips/${id}`, {
+    const res = await fetch(`https://tantratalk.in/admin/articles/${id}`, {
       cache: "no-store",
     })
     if (!res.ok) throw new Error("Failed to fetch article")
