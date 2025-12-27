@@ -27,7 +27,7 @@ function normalizeInitial(p = {}) {
 
 const PoojaFormDialog = ({
   mode = "create",
-  bookId,
+  poojaId,
   initial,
   asIcon = false,
   className,
@@ -37,146 +37,134 @@ const PoojaFormDialog = ({
   const [open, setOpen] = React.useState(false);
   const [pending, startTransition] = React.useTransition();
 
-  // Set default form state
   const [form, setForm] = React.useState(() => normalizeInitial(initial));
+  const [demoVideo, setDemoVideo] = React.useState(null);
+  const [paidVideo, setPaidVideo] = React.useState(null);
+
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // 🔒 prevent double submit
 
-    const payload = {
-      title: form.title || "",
-      description: form.description || "",
-      amount: Number(form.amount) || 0,
-    };
-
-    const url =
-      mode === "create"
-        ? `${config.adminUrl}/addpoojas`
-        : `${config.adminUrl}/pooja/${bookId}`;
+    setIsSubmitting(true);
 
     try {
+      // 🔥 FormData for file upload
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("description", form.description);
+      formData.append("amount", Number(form.amount));
+
+      if (demoVideo) formData.append("demoVideo", demoVideo);
+      if (paidVideo) formData.append("paidVideo", paidVideo);
+
+      const url =
+        mode === "create"
+          ? `${config.adminUrl}/addpooja`
+          : `${config.adminUrl}/pooja/${poojaId}`;
+
       if (mode === "create") {
-        await axios.post(url, payload, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        await axios.post(url, formData);
       } else {
-        await axios.put(url, payload, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        await axios.put(url, formData);
       }
 
-      if (typeof onSuccess === "function") {
-        onSuccess();
-      }
-
+      // ✅ success
+      onSuccess?.();
       setOpen(false);
-      startTransition(() => {
-        router.refresh();
-      });
-    } catch (err) {
-      let errorMessage = "Request failed";
-      if (err?.response?.data) {
-        try {
-          errorMessage = JSON.stringify(err.response.data, null, 2);
-        } catch {
-          errorMessage = String(err.response.data);
-        }
-      } else if (err?.message) {
-        errorMessage = err.message;
-      }
+      startTransition(() => router.refresh());
 
-      alert(`Failed to ${mode} book:\n${errorMessage}`);
-      console.error("Submission error:", err);
+    } catch (err) {
+      console.error(err);
+      alert(
+        err?.response?.data?.message || "Failed to submit pooja"
+      );
+    } finally {
+      setIsSubmitting(false); // 🔓 re-enable button
     }
   };
+
 
   const Trigger = (
     <Button
       type="button"
       variant={mode === "create" ? "default" : "ghost"}
       size={asIcon ? "icon" : "default"}
-      aria-label={mode === "create" ? "Add Pooja" : "Edit Book"}
       className={cn(className)}
     >
-      {mode === "create" ? (
-        "+ Create"
-      ) : asIcon ? (
-        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M16.475 5.475a2.121 2.121 0 1 1 3 3L7.5 20.45l-4 1 1-4 12.975-12.975Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ) : (
-        "Edit"
-      )}
+      {mode === "create" ? "+ Create" : "Edit"}
     </Button>
   );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{Trigger}</DialogTrigger>
+
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-pretty">
+          <DialogTitle>
             {mode === "create" ? "Add Pooja" : "Edit Pooja"}
           </DialogTitle>
         </DialogHeader>
+
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="grid gap-2">
-            <Label htmlFor="title">Name</Label>
+            <Label>Name</Label>
             <Input
-              id="title"
               value={form.title}
               onChange={(e) =>
                 setForm((f) => ({ ...f, title: e.target.value }))
               }
-              placeholder="Enter pooja name"
               required
             />
           </div>
+
           <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
+            <Label>Description</Label>
             <Textarea
-              id="description"
               value={form.description}
               onChange={(e) =>
                 setForm((f) => ({ ...f, description: e.target.value }))
               }
-              placeholder="Describe the pooja"
-              rows={4}
               required
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="amount">Price</Label>
-              <Input
-                id="amount"
-                type="number"
-                inputMode="decimal"
-                min="0"
-                step="0.01"
-                value={form.amount}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, amount: e.target.value }))
-                }
-                placeholder="0.00"
-                required
-              />
-            </div>
+
+          <div className="grid gap-2">
+            <Label>Amount</Label>
+            <Input
+              type="number"
+              value={form.amount}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, amount: e.target.value }))
+              }
+              required
+            />
           </div>
 
-          {/* File upload fields can be re-enabled if backend supports them */}
+          {/* 🔥 NEW FILE INPUTS */}
+          <div className="grid gap-2">
+            <Label>Demo Video</Label>
+            <Input
+              type="file"
+              accept="video/*"
+              onChange={(e) => setDemoVideo(e.target.files[0])}
+              required={mode === "create"}
+            />
+          </div>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
+          <div className="grid gap-2">
+            <Label>Paid Video</Label>
+            <Input
+              type="file"
+              accept="video/*"
+              onChange={(e) => setPaidVideo(e.target.files[0])}
+              required={mode === "create"}
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
             <Button
               type="button"
               variant="outline"
@@ -184,8 +172,18 @@ const PoojaFormDialog = ({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={pending}>
-              {mode === "create" ? "Create" : "Save changes"}
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="min-w-[120px]"
+            >
+              {isSubmitting
+                ? mode === "create"
+                  ? "Creating..."
+                  : "Updating..."
+                : mode === "create"
+                  ? "Create"
+                  : "Update"}
             </Button>
           </div>
         </form>

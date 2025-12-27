@@ -1,39 +1,39 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
-import {PoojaCard} from "./_components/poojaCard"
+import { PoojaCard } from "./_components/poojaCard";
 import { config } from "@/config";
 import PoojaFormDialog from "./_components/pooja-form-dialog";
 
 const Pooja = () => {
-  const [books, setBooks] = useState([]);
+  const [poojas, setPoojas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
 
-  const fetchPoojas = async () => {
-    const baseURL = config.adminUrl || "http://localhost:3000";
-    const url = `${baseURL}/poojas`;
+const fetchPoojas = async () => {
+  const baseURL = config.adminUrl || "http://localhost:3000";
+  const url = `${baseURL}/poojas`; // 🔥 FIXED HERE
 
-    try {
-      const response = await axios.get(url);
-      const data = response?.data?.products;
-      console.log(data, "poojadata");
-      setBooks(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Error fetching books:", err);
-      setError("Failed to load books. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    setLoading(true);
+    const response = await axios.get(url);
+
+    console.log("FULL RESPONSE --->", response.data);
+
+    const data = response?.data?.data;
+    setPoojas(Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.error("Error fetching poojas:", err);
+    setError("Failed to load poojas. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   useEffect(() => {
-    console.log(books?._id,"books");
-    
     fetchPoojas();
   }, []);
 
@@ -41,49 +41,35 @@ const Pooja = () => {
     <main className="p-6 bg-background text-foreground">
       <header className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-pretty">Poojas</h1>
+          <h1 className="text-2xl font-semibold">Poojas</h1>
           <p className="text-sm text-muted-foreground">
-            {books.length} item{books.length === 1 ? "" : "s"}f
+            {poojas.length} item{poojas.length === 1 ? "" : "s"}
           </p>
         </div>
+
         <PoojaFormDialog mode="create" onSuccess={fetchPoojas} />
       </header>
 
       {loading ? (
-        <div className="flex justify-center items-center p-8">
-          <p className="text-sm text-muted-foreground">Loading books...</p>
+        <div className="flex justify-center p-8">
+          Loading poojas...
         </div>
       ) : error ? (
-        <div className="rounded-md border border-border p-4 text-red-500">
-          <p className="text-sm">{error}</p>
-        </div>
-      ) : books.length === 0 ? (
-        <div className="rounded-md border border-border p-8 text-center">
-          <p className="text-sm text-muted-foreground">No poojas found.</p>
-        </div>
+        <div className="border p-4 text-red-500">{error}</div>
+      ) : poojas.length === 0 ? (
+        <div className="border p-8 text-center">No poojas found.</div>
       ) : (
-        <section
-          className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
-          aria-label="Book list"
-        >
-          {books.map((b, idx) => (
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {poojas.map((pooja) => (
             <PoojaCard
-              key={b._id ?? idx}
-              book={{
-                id: b._id,
-                title: b.title,
-                description: b.description,
-                amount: b.amount,
-                coverImage: b.coverImage,
-                pdffile: b.pdffile,
-              }}
-              onBookUpdated={fetchPoojas}
+              key={pooja._id}
+              pooja={pooja}
+              onPoojaUpdated={fetchPoojas}
               setLoading={setLoading}
               setError={setError}
-              setBooks={setBooks}
+              setPoojas={setPoojas}
             />
           ))}
-
         </section>
       )}
     </main>
