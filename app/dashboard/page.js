@@ -102,6 +102,17 @@ export default function AdminDashboard() {
             </Button>
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Online Classes</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-3">
+            <p className="text-sm text-muted-foreground">{"Manage online classes list and details."}</p>
+            <Button asChild>
+              <Link href="/class">Open</Link>
+            </Button>
+          </CardContent>
+        </Card>
       </section>
     </main>
   )
