@@ -76,7 +76,12 @@ const ProductPage = () => {
           </p>
         </div>
         {/* ✅ Pass refresh trigger to ProductFormDialog */}
-        <ProductFormDialog mode="create" onSuccess={() => setRefresh((r) => r + 1)} />
+        <div className="flex gap-2">
+          <ProductFormDialog mode="create" onSuccess={() => setRefresh((r) => r + 1)} />
+          <Link href="/dashboard">
+            <Button variant="outline">← Back</Button>
+          </Link>
+        </div>
       </header>
 
       {loading ? (

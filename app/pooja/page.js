@@ -46,8 +46,12 @@ const fetchPoojas = async () => {
             {poojas.length} item{poojas.length === 1 ? "" : "s"}
           </p>
         </div>
-
+       <div className="flex gap-2">
         <PoojaFormDialog mode="create" onSuccess={fetchPoojas} />
+           <Link href="/dashboard">
+            <Button variant="outline">← Back</Button>
+          </Link>
+        </div>
       </header>
 
       {loading ? (

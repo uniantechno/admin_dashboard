@@ -102,7 +102,13 @@ export default function AstrologyPage() {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Astrologers</h1>
-        <Button onClick={handleCreate}>+ Create</Button>
+        <div className="flex gap-2">
+          <Button onClick={handleCreate}>+ Create</Button>
+             <Link href="/dashboard">
+            <Button variant="outline">← Back</Button>
+            </Link>
+        </div>
+        
       </div>
 
       {error && <div className="rounded-md bg-red-50 p-4 text-red-600">{error}</div>}

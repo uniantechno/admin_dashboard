@@ -44,7 +44,12 @@ const BooksPage = () => {
             {books.length} item{books.length === 1 ? "" : "s"}f
           </p>
         </div>
+        <div className="flex gap-2">
         <BookFormDialog mode="create" onSuccess={fetchBooks} />
+           <Link href="/dashboard">
+                    <Button variant="outline">← Back</Button>
+                  </Link>
+        </div>
       </header>
 
       {loading ? (

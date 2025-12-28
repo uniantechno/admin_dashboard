@@ -46,8 +46,12 @@ const Class = () => {
                         {classes.length} item{classes.length === 1 ? "" : "s"}
                     </p>
                 </div>
-
+              <div className="flex gap-2">
                 <ClassFormDialog mode="create" onSuccess={fetchClasses} />
+                   <Link href="/dashboard">
+                            <Button variant="outline">← Back</Button>
+                          </Link>
+                </div>
             </header>
 
             {loading ? (

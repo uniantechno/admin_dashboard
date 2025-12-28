@@ -88,8 +88,12 @@ export default function TipsPage() {
             {tips.length} item{tips.length === 1 ? "" : "s"}
           </p>
         </div>
-
+       <div className="flex gap-2">
         <Button onClick={() => setDialogOpen(true)}>+ Create</Button>
+           <Link href="/dashboard">
+                    <Button variant="outline">← Back</Button>
+                  </Link>
+        </div>
       </header>
 
       {error && (

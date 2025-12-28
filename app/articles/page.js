@@ -76,7 +76,12 @@ export default function ArticlesPage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Articles</h1>
-        <Button onClick={() => setDialogOpen(true)}>+ Create</Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setDialogOpen(true)}>+ Create</Button>
+          <Link href="/dashboard">
+            <Button variant="outline">← Back</Button>
+          </Link>
+        </div>
       </div>
 
       {error && <div className="mb-4 p-4 bg-red-50 text-red-700 rounded">{error}</div>}
