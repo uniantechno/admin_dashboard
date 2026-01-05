@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TipFormDialog } from "./_components/tip-form-dialog";
 import { config } from "@/config";
+import Link from "next/link"
 
 export default function TipsPage() {
   const [tips, setTips] = useState([]);

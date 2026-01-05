@@ -5,6 +5,8 @@ import axios from "axios";
 import { ClassCard } from "./_components/classCard";
 import { config } from "@/config";
 import ClassFormDialog from "./_components/class-form-dialog";
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 const Class = () => {
     const [classes, setClasses] = useState([]);

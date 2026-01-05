@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { AstrologyFormDialog } from "./_components/astrology-form-dialog"
 import { config } from "../../config"
+import Link from "next/link"
 
 export default function AstrologyPage() {
   const [astrologers, setAstrologers] = useState([])

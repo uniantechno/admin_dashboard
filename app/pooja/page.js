@@ -5,6 +5,8 @@ import axios from "axios";
 import { PoojaCard } from "./_components/poojaCard";
 import { config } from "@/config";
 import PoojaFormDialog from "./_components/pooja-form-dialog";
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 const Pooja = () => {
   const [poojas, setPoojas] = useState([]);
