@@ -69,7 +69,7 @@ export default function AdminDashboard() {
             </Button>
           </CardContent>
         </Card>
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle>Astrologers</CardTitle>
           </CardHeader>
@@ -79,7 +79,7 @@ export default function AdminDashboard() {
               <Link href="/astrology">Open</Link>
             </Button>
           </CardContent>
-        </Card>
+        </Card> */}
         <Card>
           <CardHeader>
             <CardTitle>Remedies</CardTitle>
