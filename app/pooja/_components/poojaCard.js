@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import PoojaFormDialog from "./pooja-form-dialog";
-import { config } from "@/config";
+// import { config } from "@/config";
 import axios from "axios";
 import { Trash, Eye } from "lucide-react";
 
@@ -14,8 +14,19 @@ export function PoojaCard({
   setPoojas,
 }) {
   if (!pooja) return null; // 🔥 SAFETY
-
   const { _id, title, description, amount } = pooja;
+  const lang = "en";
+
+  const showTitle =
+    typeof title === "string"
+      ? title
+      : title?.[lang] || title?.en || "";
+
+  const showDescription =
+    typeof description === "string"
+      ? description
+      : description?.[lang] || description?.en || "";
+
 
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this pooja?")) return;
@@ -24,7 +35,7 @@ export function PoojaCard({
       setLoading(true);
       setError(null);
 
-      const baseURL = config.adminUrl || "http://localhost:3000";
+      const baseURL =  "http://localhost:5000/admin";
       await axios.delete(`${baseURL}/pooja/${_id}`);
 
       setPoojas((prev) => prev.filter((item) => item._id !== _id));
@@ -40,13 +51,14 @@ export function PoojaCard({
     <article className="rounded-lg border border-border bg-card text-card-foreground">
       <div className="p-4 flex flex-col gap-3">
         <div>
-          <h2 className="font-medium">{title}</h2>
+          <h2 className="font-medium">{showTitle}</h2>
           {amount && (
             <p className="text-sm text-muted-foreground">₹{amount}</p>
           )}
+
         </div>
 
-        {description && (
+        {showDescription && (
           <p
             className="text-sm text-muted-foreground"
             style={{
@@ -56,7 +68,7 @@ export function PoojaCard({
               overflow: "hidden",
             }}
           >
-            {description}
+            {showDescription}
           </p>
         )}
 

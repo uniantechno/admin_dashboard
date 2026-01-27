@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { PoojaCard } from "./_components/poojaCard";
-import { config } from "@/config";
+// import { config } from "@/config";
 import PoojaFormDialog from "./_components/pooja-form-dialog";
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -14,7 +14,7 @@ const Pooja = () => {
   const [error, setError] = useState(null);
 
 const fetchPoojas = async () => {
-  const baseURL = config.adminUrl || "http://localhost:3000";
+  const baseURL =  "http://localhost:5000/admin";
   const url = `${baseURL}/poojas`; // 🔥 FIXED HERE
 
   try {
