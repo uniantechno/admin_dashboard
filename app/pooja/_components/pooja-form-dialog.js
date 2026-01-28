@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -15,123 +16,145 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { config } from "../../../config";
-import axios from "axios";
+
+const LANGS = ["ta", "en","ml", "ka", "te", "hi"];
+
+const emptyLang = () =>
+  Object.fromEntries(LANGS.map((l) => [l, ""]));
 
 function normalizeInitial(p = {}) {
   return {
-    title: p.title || "",
-    description: p.description || "",
+    title: p.title || emptyLang(),
+    description: p.description || emptyLang(),
     amount: p.amount || "",
+    demoVideo: p.demoVideo || "",
+    paidVideo: p.paidVideo || "",
   };
 }
+
+
+
 
 const PoojaFormDialog = ({
   mode = "create",
   poojaId,
   initial,
-  asIcon = false,
   className,
   onSuccess,
 }) => {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
-  const [pending, startTransition] = React.useTransition();
-
-  const [form, setForm] = React.useState(() => normalizeInitial(initial));
+  const [form, setForm] = React.useState(() =>
+    normalizeInitial(initial)
+  );
   const [demoVideo, setDemoVideo] = React.useState(null);
   const [paidVideo, setPaidVideo] = React.useState(null);
 
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    if (isSubmitting) return; // 🔒 prevent double submit
+  const handleLangChange = (type, lang, value) => {
+  setForm((prev) => ({
+    ...prev,
+    [type]: {
+      ...prev[type],
+      [lang]: value,
+    },
+  }));
+};
 
-    setIsSubmitting(true);
 
-    try {
-      // 🔥 FormData for file upload
-      const formData = new FormData();
-      formData.append("title", form.title);
-      formData.append("description", form.description);
-      formData.append("amount", Number(form.amount));
+const onSubmit = async (e) => {
+  e.preventDefault();
+  if (loading) return;
+  setLoading(true);
 
-      if (demoVideo) formData.append("demoVideo", demoVideo);
-      if (paidVideo) formData.append("paidVideo", paidVideo);
+  try {
+    const fd = new FormData();
+    fd.append("title", JSON.stringify(form.title));
+    fd.append("description", JSON.stringify(form.description));
+    fd.append("amount", form.amount);
 
-      const url =
-        mode === "create"
-          ? `${config.adminUrl}/addpooja`
-          : `${config.adminUrl}/pooja/${poojaId}`;
+    if (demoVideo) fd.append("demoVideo", demoVideo);
+    if (paidVideo) fd.append("paidVideo", paidVideo);
 
-      if (mode === "create") {
-        await axios.post(url, formData);
-      } else {
-        await axios.put(url, formData);
-      }
+    const url =
+      mode === "create"
+        ? `${config.adminUrl}/addpooja`
+        : `${config.adminUrl}/pooja/${poojaId}`;
 
-      // ✅ success
-      onSuccess?.();
-      setOpen(false);
-      startTransition(() => router.refresh());
+    const configAxios = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
 
-    } catch (err) {
-      console.error(err);
-      alert(
-        err?.response?.data?.message || "Failed to submit pooja"
-      );
-    } finally {
-      setIsSubmitting(false); // 🔓 re-enable button
+    if (mode === "create") {
+      await axios.post(url, fd, configAxios);
+    } else {
+      await axios.put(url, fd, configAxios);
     }
-  };
 
+    onSuccess && onSuccess();
+    setOpen(false);
+    router.refresh();
+  } catch (err) {
+    alert(err?.response?.data?.message || "Failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
-  const Trigger = (
-    <Button
-      type="button"
-      variant={mode === "create" ? "default" : "ghost"}
-      size={asIcon ? "icon" : "default"}
-      className={cn(className)}
-    >
-      {mode === "create" ? "+ Create" : "Edit"}
-    </Button>
-  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{Trigger}</DialogTrigger>
+      <DialogTrigger asChild>
+        <Button className={cn(className)}>
+          {mode === "create" ? "+ Add Pooja" : "Edit"}
+        </Button>
+      </DialogTrigger>
 
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>
-            {mode === "create" ? "Add Pooja" : "Edit Pooja"}
+            {mode === "create" ? "Create Pooja" : "Update Pooja"}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={onSubmit} className="space-y-4">
-          <div className="grid gap-2">
-            <Label>Name</Label>
-            <Input
-              value={form.title}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, title: e.target.value }))
-              }
-              required
-            />
+        <form onSubmit={onSubmit} className="space-y-4 overflow-y-auto max-h-[70vh] pr-2">
+          {/* TITLE */}
+          <div>
+            <Label>Title (Multi-Language)</Label>
+            {LANGS.map((l) => (
+              <Input
+                key={l}
+                placeholder={`Title (${l})`}
+                value={form.title[l]}
+                onChange={(e) =>
+                  handleLangChange("title", l, e.target.value)
+                }
+                className="mt-1 h-9"
+              />
+            ))}
           </div>
 
-          <div className="grid gap-2">
-            <Label>Description</Label>
-            <Textarea
-              value={form.description}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, description: e.target.value }))
-              }
-              required
-            />
+          {/* DESCRIPTION */}
+          <div>
+            <Label>Description (Multi-Language)</Label>
+            {LANGS.map((l) => (
+              <Textarea
+                key={l}
+                placeholder={`Description (${l})`}
+                value={form.description[l]}
+                onChange={(e) =>
+                  handleLangChange("description", l, e.target.value)
+                }
+                className="mt-1 min-h-[70px]"
+              />
+            ))}
           </div>
 
-          <div className="grid gap-2">
+          {/* AMOUNT */}
+          <div>
             <Label>Amount</Label>
             <Input
               type="number"
@@ -143,28 +166,28 @@ const PoojaFormDialog = ({
             />
           </div>
 
-          {/* 🔥 NEW FILE INPUTS */}
-          <div className="grid gap-2">
+          {/* VIDEOS */}
+          <div>
             <Label>Demo Video</Label>
             <Input
               type="file"
               accept="video/*"
-              onChange={(e) => setDemoVideo(e.target.files[0])}
+              onChange={(e) => setDemoVideo(e.target.files?.[0] || null)}
               required={mode === "create"}
             />
           </div>
 
-          <div className="grid gap-2">
+          <div>
             <Label>Paid Video</Label>
             <Input
               type="file"
               accept="video/*"
-              onChange={(e) => setPaidVideo(e.target.files[0])}
+              onChange={(e) => setPaidVideo(e.target.files?.[0] || null)}
               required={mode === "create"}
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex justify-end gap-2">
             <Button
               type="button"
               variant="outline"
@@ -172,18 +195,8 @@ const PoojaFormDialog = ({
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="min-w-[120px]"
-            >
-              {isSubmitting
-                ? mode === "create"
-                  ? "Creating..."
-                  : "Updating..."
-                : mode === "create"
-                  ? "Create"
-                  : "Update"}
+            <Button disabled={loading}>
+              {loading ? "Saving..." : "Save"}
             </Button>
           </div>
         </form>

@@ -14,8 +14,18 @@ export function PoojaCard({
   setPoojas,
 }) {
   if (!pooja) return null; // 🔥 SAFETY
-
   const { _id, title, description, amount } = pooja;
+  const lang = "en";
+
+  const showTitle =
+    typeof title === "string"      ? title
+      : title?.[lang] || title?.en || "";
+
+  const showDescription =
+    typeof description === "string"
+      ? description
+      : description?.[lang] || description?.en || "";
+
 
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this pooja?")) return;
@@ -40,13 +50,14 @@ export function PoojaCard({
     <article className="rounded-lg border border-border bg-card text-card-foreground">
       <div className="p-4 flex flex-col gap-3">
         <div>
-          <h2 className="font-medium">{title}</h2>
+          <h2 className="font-medium">{showTitle}</h2>
           {amount && (
             <p className="text-sm text-muted-foreground">₹{amount}</p>
           )}
+
         </div>
 
-        {description && (
+        {showDescription && (
           <p
             className="text-sm text-muted-foreground"
             style={{
@@ -56,7 +67,7 @@ export function PoojaCard({
               overflow: "hidden",
             }}
           >
-            {description}
+            {showDescription}
           </p>
         )}
 
