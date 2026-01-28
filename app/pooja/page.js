@@ -14,7 +14,7 @@ const Pooja = () => {
   const [error, setError] = useState(null);
 
 const fetchPoojas = async () => {
-  const baseURL = config.adminUrl || "http://localhost:3000";
+  const baseURL = config.adminUrl || "http://localhost:5000/admin";
   const url = `${baseURL}/poojas`; // 🔥 FIXED HERE
 
   try {

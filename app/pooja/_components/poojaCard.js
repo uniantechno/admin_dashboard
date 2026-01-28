@@ -18,7 +18,8 @@ export function PoojaCard({
   const lang = "en";
 
   const showTitle =
-    typeof title === "string"      ? title
+    typeof title === "string"
+      ? title
       : title?.[lang] || title?.en || "";
 
   const showDescription =
@@ -34,7 +35,7 @@ export function PoojaCard({
       setLoading(true);
       setError(null);
 
-      const baseURL = config.adminUrl || "http://localhost:3000";
+      const baseURL = config.adminUrl || "http://localhost:5000/admin";
       await axios.delete(`${baseURL}/pooja/${_id}`);
 
       setPoojas((prev) => prev.filter((item) => item._id !== _id));
@@ -76,10 +77,10 @@ export function PoojaCard({
           <PoojaFormDialog
             mode="edit"
             poojaId={_id}
-            initial={pooja}
-            asIcon
+            initial={pooja}   // 🔥 FULL OBJECT (title:{en,ta,...})
             onSuccess={onPoojaUpdated}
           />
+
 
           {/* DELETE */}
           <Button

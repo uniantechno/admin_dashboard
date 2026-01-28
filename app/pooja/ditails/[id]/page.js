@@ -37,7 +37,11 @@ async function getPooja(id) {
     const data = payload?.data ?? payload ?? null
     const item = Array.isArray(data) ? data[0] : data
 
-    return { ok: true, status: res.status, item }
+    return {
+      ok: true,
+      status: res.status,
+      item,
+    }
   } catch (error) {
     return {
       ok: false,
@@ -112,7 +116,6 @@ export default async function PoojaDetailsPage({ params }) {
                 <div key={lang} className="border rounded-md p-4">
                   <div className="text-sm font-semibold text-muted-foreground mb-2">
                     {LANG_LABELS[lang] || lang.toUpperCase()}
-                    
                   </div>
                   <p className="leading-relaxed whitespace-pre-line">
                     {text}
