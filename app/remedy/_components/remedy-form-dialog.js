@@ -171,12 +171,15 @@ useEffect(() => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg max-h-[80vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>{remedy ? "Edit Remedy" : "Create Remedy"}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+              <form
+                  onSubmit={handleSubmit}
+                  className="space-y-4 max-h-[65vh] overflow-y-auto pr-2"
+              >
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           {/* CATEGORY */}
@@ -211,7 +214,7 @@ useEffect(() => {
                 Description ({lang.toUpperCase()})
               </label>
               <Textarea
-                rows={3}
+                rows={2}
                 value={formData.description[lang]}
                 onChange={(e) =>
                   setFormData(prev => ({
