@@ -68,10 +68,17 @@ const categoryMap = {
   }
 }
 
+
+
+const createEmptyLang = () => ({
+  ta: "", en: "", ml: "", ka: "", te: "", hi: ""
+})
+
 const normalizeLang = (obj = {}) => ({
   ...createEmptyLang(),
   ...(typeof obj === "string" ? { en: obj } : obj)
 })
+
 
 const normalize = (str = "") =>
   str.toLowerCase().trim()
@@ -101,29 +108,30 @@ export function RemedyFormDialog({ open, onOpenChange, remedy = null, onSuccess 
   })
 
   /* ---------- PREFILL EDIT ---------- */
-  useEffect(() => {
-    if (!open) return
+useEffect(() => {
+  if (!open) return
 
-      if (remedy) {
-          const key = getCategoryKeyFromCategory(remedy.category)
+  if (remedy) {
+    const key = getCategoryKeyFromCategory(remedy.category)
 
-          setFormData({
-              categoryKey: key,
-              category: categoryMap[key] || remedy.category || emptyLang,
-              description: remedy.description || emptyLang,
-              coverImage: null
-          })
-      }
-      else {
-          setFormData({
-              categoryKey: key,
-              category: normalizeLang(categoryMap[key] || remedy.category),
-              description: normalizeLang(remedy.description),
-              coverImage: null
-          })
-      }
-    setError("")
-  }, [open, remedy])
+    setFormData({
+      categoryKey: key,
+      category: normalizeLang(categoryMap[key] || remedy.category),
+      description: normalizeLang(remedy.description),
+      coverImage: null
+    })
+  } else {
+    setFormData({
+      categoryKey: "",
+      category: createEmptyLang(),
+      description: createEmptyLang(),
+      coverImage: null
+    })
+  }
+
+  setError("")
+}, [open, remedy])
+
 
   /* ---------- SUBMIT ---------- */
   const handleSubmit = async (e) => {
