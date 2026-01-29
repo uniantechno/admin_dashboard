@@ -1,189 +1,3 @@
-// "use client"
-
-// import { useEffect, useState } from "react"
-// import { Button } from "@/components/ui/button"
-// import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-// import { Input } from "@/components/ui/input"
-// import { Textarea } from "@/components/ui/textarea"
-// import { config } from "../../../config"
-
-// export function RemedyFormDialog({ open, onOpenChange, remedy = null, onSuccess }) {
-//     const [loading, setLoading] = useState(false)
-//     const [error, setError] = useState("")
-//     const [success, setSuccess] = useState("")
-//     const [formData, setFormData] = useState({
-//         category: "",
-//         description: "",
-//         coverImage: null,
-//     })
-
-//     useEffect(() => {
-//         if (open) {
-//             if (remedy) {
-//                 setFormData({
-//                     category: remedy.category || "",
-//                     description: remedy.description || "",
-//                     coverImage: null,
-//                 })
-//             } else {
-//                 setFormData({ category: "", description: "", coverImage: null })
-//             }
-//             setError("")
-//             setSuccess("")
-//         }
-//     }, [open, remedy])
-
-//     const handleChange = (e) => {
-//         const { name, value, files } = e.target
-//         if (name === "coverImage") {
-//             setFormData((prev) => ({ ...prev, coverImage: files?.[0] || null }))
-//         } else {
-//             setFormData((prev) => ({ ...prev, [name]: value }))
-//         }
-//     }
-
-// const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setError("");
-//     setSuccess("");
-//     setLoading(true);
-
-//     try {
-//         const form = new FormData();
-//         form.append("category", formData.category);
-//         form.append("description", formData.description);
-//         if (formData.coverImage) {
-//             form.append("coverImage", formData.coverImage);
-//         }
-
-//         const baseURL = config.adminUrl || "http://localhost:3000";
-//         const endpoint = remedy
-//             ? `${baseURL}/editremedy/${remedy._id || remedy.id}`
-//             : `${baseURL}/addremedy`;
-//         const method = remedy ? "PUT" : "POST";
-
-//         const res = await fetch(endpoint, { method, body: form });
-//         const result = await res.json();
-
-//         // FIX 1 → success check improved (covers all API types)
-//         const isOK =
-//             res.ok &&
-//             (result.success === true ||
-//                 result.status === "success" ||
-//                 result.message?.toLowerCase()?.includes("success"));
-
-//         if (!isOK) {
-//             throw new Error(result.message || "Save failed");
-//         }
-
-//         // REFRESH parent list
-//         await onSuccess?.();
-
-//         // CLOSE the dialog
-//         onOpenChange(false);
-
-//         // CLEAR form after close
-//         setFormData({
-//             category: "",
-//             description: "",
-//             coverImage: null,
-//         });
-
-//         return;
-//     } catch (err) {
-//         setError(err.message);
-//     } finally {
-//         setLoading(false);
-//     }
-// };
-
-
-
-//     const categories = [
-//         "career",
-//         "love",
-//         "family",
-//         "education",
-//         "money",
-//         "health",
-//         "relationship",
-//     ]
-
-//     return (
-//         <Dialog open={open} onOpenChange={onOpenChange}>
-//             <DialogContent className="max-w-md">
-//                 <DialogHeader>
-//                     <DialogTitle>{remedy ? "Edit Remedy" : "Create Remedy"}</DialogTitle>
-//                 </DialogHeader>
-
-//                 <form onSubmit={handleSubmit} className="space-y-4">
-//                     {error && <p className="text-sm text-red-500">{error}</p>}
-//                     {success && <p className="text-sm text-green-600 font-medium">{success}</p>}
-
-//                     <div>
-//                         <label className="block text-sm font-medium mb-1">Category</label>
-//                         <select
-//                             name="category"
-//                             value={formData.category}
-//                             onChange={handleChange}
-//                             required
-//                             className="w-full px-3 py-2 border rounded"
-//                         >
-//                             <option value="" disabled>
-//                                 Select category
-//                             </option>
-//                             {categories.map((c) => (
-//                                 <option key={c} value={c}>
-//                                     {c.charAt(0).toUpperCase() + c.slice(1)}
-//                                 </option>
-//                             ))}
-//                         </select>
-//                     </div>
-
-//                     <div>
-//                         <label className="block text-sm font-medium mb-1">Description</label>
-//                         <Textarea
-//                             name="description"
-//                             value={formData.description}
-//                             onChange={handleChange}
-//                             placeholder="Enter description"
-//                             rows={5}
-//                             required
-//                         />
-//                     </div>
-
-//                     <div>
-//                         <label className="block text-sm font-medium mb-1">Cover Image</label>
-//                         <Input type="file" name="coverImage" accept="image/*" onChange={handleChange} />
-//                         {remedy?.coverImage && (
-//                             <img
-//                                 src={
-//                                     remedy.coverImage.startsWith("http")
-//                                         ? remedy.coverImage
-//                                         : `${config.adminUrl || "http://localhost:3000"}/uploads/${remedy.coverImage}`
-//                                 }
-//                                 alt="cover"
-//                                 className="mt-2 w-24 h-24 object-cover rounded border"
-//                             />
-//                         )}
-//                     </div>
-
-//                     <div className="flex justify-end gap-2">
-//                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-//                             Cancel
-//                         </Button>
-//                         <Button type="submit" disabled={loading}>
-//                             {loading ? "Saving..." : "Save"}
-//                         </Button>
-//                     </div>
-//                 </form>
-//             </DialogContent>
-//         </Dialog>
-//     )
-// }
-
-
-
 "use client"
 
 import { useEffect, useState } from "react"
@@ -193,161 +7,249 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { config } from "../../../config"
 
+const emptyLang = { ta: "", en: "", ml: "", ka: "", te: "", hi: "" }
+
+const categoryMap = {
+  career: {
+    en: "Career",
+    ta: "தொழில் (Career)",
+    te: "వృత్తి (Career)",
+    hi: "करियर (Career)",
+    ml: "കരിയർ (Career)",
+    ka: "ವೃತ್ತಿ (Career)"
+  },
+  love: {
+    en: "Love",
+    ta: "காதல் (Love)",
+    te: "ప్రేమ (Love)",
+    hi: "प्रेम (Love)",
+    ml: "പ്രേമം (Love)",
+    ka: "ಪ್ರೇಮ (Love)"
+  },
+  family: {
+    en: "Family",
+    ta: "குடும்பம் (Family)",
+    te: "కుటుంబం (Family)",
+    hi: "परिवार (Family)",
+    ml: "കുടുംബം (Family)",
+    ka: "ಕುಟುಂಬ (Family)"
+  },
+  education: {
+    en: "Education",
+    ta: "கல்வி (Education)",
+    te: "విద్య (Education)",
+    hi: "शिक्षा (Education)",
+    ml: "വിദ്യാഭ്യാസം (Education)",
+    ka: "ಶಿಕ್ಷಣ (Education)"
+  },
+  money: {
+    en: "Money",
+    ta: "பணம் (Money)",
+    te: "డబ్బు (Money)",
+    hi: "धन (Money)",
+    ml: "ധനം (Money)",
+    ka: "ಹಣ (Money)"
+  },
+  health: {
+    en: "Health",
+    ta: "ஆரோக்கியம் (Health)",
+    te: "ఆరోగ్యం (Health)",
+    hi: "स्वास्थ्य (Health)",
+    ml: "ആരോഗ്യം (Health)",
+    ka: "ಆರೋಗ್ಯ (Health)"
+  },
+  relationship: {
+    en: "Relationship",
+    ta: "உறவு (Relationship)",
+    te: "సంబంధం (Relationship)",
+    hi: "रिश्ता (Relationship)",
+    ml: "ബന്ധം (Relationship)",
+    ka: "ಸಂಬಂಧ (Relationship)"
+  }
+}
+
+const normalizeLang = (obj = {}) => ({
+  ...createEmptyLang(),
+  ...(typeof obj === "string" ? { en: obj } : obj)
+})
+
+const normalize = (str = "") =>
+  str.toLowerCase().trim()
+
+const getCategoryKeyFromCategory = (categoryObj) => {
+  if (!categoryObj?.en) return ""
+
+  const enValue = normalize(categoryObj.en)
+
+  return (
+    Object.keys(categoryMap).find(
+      key => normalize(categoryMap[key].en) === enValue
+    ) || ""
+  )
+}
+
+
+
 export function RemedyFormDialog({ open, onOpenChange, remedy = null, onSuccess }) {
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState("")
-    const [formData, setFormData] = useState({
-        category: "",
-        description: "",
-        coverImage: null,
-    })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [formData, setFormData] = useState({
+    categoryKey: "",
+    category: emptyLang,
+    description: emptyLang,
+    coverImage: null
+  })
 
-    useEffect(() => {
-        if (open) {
-            if (remedy) {
-                setFormData({
-                    category: remedy.category || "",
-                    description: remedy.description || "",
-                    coverImage: null,
-                })
-            } else {
-                setFormData({ category: "", description: "", coverImage: null })
-            }
-            setError("")
-        }
-    }, [open, remedy])
+  /* ---------- PREFILL EDIT ---------- */
+  useEffect(() => {
+    if (!open) return
 
-    const handleChange = (e) => {
-        const { name, value, files } = e.target
-        if (name === "coverImage") {
-            setFormData((prev) => ({ ...prev, coverImage: files?.[0] || null }))
-        } else {
-            setFormData((prev) => ({ ...prev, [name]: value }))
-        }
+      if (remedy) {
+          const key = getCategoryKeyFromCategory(remedy.category)
+
+          setFormData({
+              categoryKey: key,
+              category: categoryMap[key] || remedy.category || emptyLang,
+              description: remedy.description || emptyLang,
+              coverImage: null
+          })
+      }
+      else {
+          setFormData({
+              categoryKey: key,
+              category: normalizeLang(categoryMap[key] || remedy.category),
+              description: normalizeLang(remedy.description),
+              coverImage: null
+          })
+      }
+    setError("")
+  }, [open, remedy])
+
+  /* ---------- SUBMIT ---------- */
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError("")
+
+    try {
+      const fd = new FormData()
+      fd.append("categoryKey", formData.categoryKey)
+      fd.append("category", JSON.stringify(formData.category))
+      fd.append("description", JSON.stringify(formData.description))
+      if (formData.coverImage) fd.append("coverImage", formData.coverImage)
+
+      const endpoint = remedy
+        ? `${config.adminUrl}/editremedy/${remedy._id}`
+        : `${config.adminUrl}/addremedy`
+
+      const res = await fetch(endpoint, {
+        method: remedy ? "PUT" : "POST",
+        body: fd
+      })
+
+      const result = await res.json()
+      if (!res.ok || result.success === false) {
+        throw new Error(result.message || "Failed")
+      }
+
+      await onSuccess()
+      onOpenChange(false)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        setError("")
-        setLoading(true)
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>{remedy ? "Edit Remedy" : "Create Remedy"}</DialogTitle>
+        </DialogHeader>
 
-        try {
-            const form = new FormData()
-            form.append("category", formData.category)
-            form.append("description", formData.description)
-            if (formData.coverImage) {
-                form.append("coverImage", formData.coverImage)
-            }
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && <p className="text-sm text-red-500">{error}</p>}
 
-            const baseURL = config.adminUrl
-            const endpoint = remedy
-                ? `${baseURL}/editremedy/${remedy._id || remedy.id}`
-                : `${baseURL}/addremedy`
+          {/* CATEGORY */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Category</label>
+            <select
+              value={formData.categoryKey}
+              onChange={(e) => {
+                const key = e.target.value
+                setFormData(prev => ({
+                  ...prev,
+                  categoryKey: key,
+                  category: categoryMap[key]
+                }))
+              }}
+              required
+              className="w-full px-3 py-2 border rounded"
+            >
+              <option value="" disabled>Select category</option>
+              {Object.keys(categoryMap).map(key => (
+                <option key={key} value={key}>
+                  {categoryMap[key].en}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            const method = remedy ? "PUT" : "POST"
+          {/* DESCRIPTION */}
+          {["en", "ta", "te", "hi", "ml", "ka"].map(lang => (
+            <div key={lang}>
+              <label className="block text-sm font-medium mb-1">
+                Description ({lang.toUpperCase()})
+              </label>
+              <Textarea
+                rows={3}
+                value={formData.description[lang]}
+                onChange={(e) =>
+                  setFormData(prev => ({
+                    ...prev,
+                    description: {
+                      ...prev.description,
+                      [lang]: e.target.value
+                    }
+                  }))
+                }
+              />
+            </div>
+          ))}
 
-            const res = await fetch(endpoint, { method, body: form })
-            const result = await res.json()
+          {/* IMAGE */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Cover Image</label>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                setFormData(prev => ({
+                  ...prev,
+                  coverImage: e.target.files?.[0] || null
+                }))
+              }
+            />
+            {remedy?.coverImage && (
+              <img
+                src={remedy.coverImage}
+                className="mt-2 w-24 h-24 object-cover rounded"
+                alt="cover"
+              />
+            )}
+          </div>
 
-            if (!res.ok || result.success === false) {
-                throw new Error(result.message || "Failed to save")
-            }
-
-            // WAIT UNTIL LIST REFRESH COMPLETES
-            await onSuccess()
-
-            // Close modal only AFTER refresh
-            onOpenChange(false)
-
-            setFormData({
-                category: "",
-                description: "",
-                coverImage: null,
-            })
-
-        } catch (err) {
-            setError(err.message)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const categories = [
-        "career",
-        "love",
-        "family",
-        "education",
-        "money",
-        "health",
-        "relationship",
-    ]
-
-    return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-md">
-                <DialogHeader>
-                    <DialogTitle>{remedy ? "Edit Remedy" : "Create Remedy"}</DialogTitle>
-                </DialogHeader>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    {error && <p className="text-sm text-red-500">{error}</p>}
-
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Category</label>
-                        <select
-                            name="category"
-                            value={formData.category}
-                            onChange={handleChange}
-                            required
-                            className="w-full px-3 py-2 border rounded"
-                        >
-                            <option value="" disabled>Select category</option>
-                            {categories.map((c) => (
-                                <option key={c} value={c}>
-                                    {c.charAt(0).toUpperCase() + c.slice(1)}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Description</label>
-                        <Textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            rows={5}
-                            required
-                            placeholder="Enter description"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Cover Image</label>
-                        <Input type="file" name="coverImage" accept="image/*" onChange={handleChange} />
-                        {remedy?.coverImage && (
-                            <img
-                                src={
-                                    remedy.coverImage.startsWith("http")
-                                        ? remedy.coverImage
-                                        : `${config.adminUrl}/uploads/${remedy.coverImage}`
-                                }
-                                alt="cover"
-                                className="mt-2 w-24 h-24 object-cover rounded"
-                            />
-                        )}
-                    </div>
-
-                    <div className="flex justify-end gap-2">
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                            Cancel
-                        </Button>
-                        <Button type="submit" disabled={loading}>
-                            {loading ? "Saving..." : "Save"}
-                        </Button>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
-    )
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Saving..." : "Save"}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
 }

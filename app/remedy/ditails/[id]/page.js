@@ -2,6 +2,16 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { config } from "@/config"
 
+const LANGS = [
+  { key: "en", label: "English" },
+  { key: "ta", label: "Tamil" },
+  { key: "te", label: "Telugu" },
+  { key: "hi", label: "Hindi" },
+  { key: "ml", label: "Malayalam" },
+  { key: "ka", label: "Kannada" },
+]
+
+
 async function getRemedy(id) {
     try {
         const url = `${config.adminUrl}/remedies/${id}`
@@ -45,15 +55,41 @@ export default async function RemedyDetailsPage({ params }) {
 
     return (
         <div className="max-w-2xl mx-auto p-8">
-            {remedy.coverImage && (
-                <img src={remedy.coverImage || "/placeholder.svg"} alt={remedy.category} className="w-full h-96 object-cover rounded-lg mb-8" />
-            )}
-            <h1 className="text-4xl font-bold mb-4">{remedy.category?.charAt(0).toUpperCase() + remedy.category?.slice(1)}</h1>
-            <p className="text-gray-600 whitespace-pre-wrap mb-8">{remedy.description}</p>
+  {remedy.coverImage && (
+    <img
+      src={remedy.coverImage}
+      alt="Remedy"
+      className="w-full h-96 object-cover rounded-lg mb-8"
+    />
+  )}
 
-            <Link href="/remedy">
-                <Button>Back to Remedies</Button>
-            </Link>
-        </div>
+  {LANGS.map(({ key, label }) => {
+    const title = remedy.category?.[key]
+    const desc = remedy.description?.[key]
+
+    if (!title && !desc) return null
+
+    return (
+      <div key={key} className="mb-8">
+        <h2 className="text-2xl font-bold mb-2">{label}</h2>
+
+        {title && (
+          <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        )}
+
+        {desc && (
+          <p className="text-gray-600 whitespace-pre-wrap">
+            {desc}
+          </p>
+        )}
+      </div>
+    )
+  })}
+
+  <Link href="/remedy">
+    <Button>Back to Remedies</Button>
+  </Link>
+</div>
+
     )
 }
