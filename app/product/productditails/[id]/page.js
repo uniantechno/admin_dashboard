@@ -1,5 +1,27 @@
 import Link from "next/link"
 
+/* ----------------------------------
+   CONFIG
+---------------------------------- */
+
+const LANGS = [
+  { key: "ta", label: "Tamil" },
+  { key: "en", label: "English" },
+  { key: "te", label: "Telugu" },
+  { key: "hi", label: "Hindi" },
+  { key: "ml", label: "Malayalam" },
+  { key: "ka", label: "Kannada" },
+]
+
+const getLangValue = (obj, lang) => {
+  if (!obj || typeof obj !== "object") return "—"
+  return obj?.[lang] || "—"
+}
+
+/* ----------------------------------
+   FETCH
+---------------------------------- */
+
 async function getProductDetails(id) {
   const url = `https://tantratalk.in/admin/products-details/${id}`
   const res = await fetch(url, { cache: "no-store" })
@@ -7,9 +29,7 @@ async function getProductDetails(id) {
   let payload = null
   try {
     payload = await res.json()
-  } catch (e) {
-    // ignore json parse errors
-  }
+  } catch {}
 
   const data = payload?.data ?? payload ?? null
   const item = Array.isArray(data) ? data[0] : data
@@ -21,103 +41,125 @@ async function getProductDetails(id) {
   }
 }
 
-export default async function ProductDetailsPage({ params }) {
-  // ✅ Await params (required in Next.js 15+)
-  const { id } = await params
+/* ----------------------------------
+   PAGE
+---------------------------------- */
 
+export default async function ProductDetailsPage({ params }) {
+  const { id } = await params
   const { ok, status, item } = await getProductDetails(id)
 
-  if (!ok) {
+  /* ---------- ERROR STATES ---------- */
+
+  if (!ok || !item) {
     return (
       <main className="container mx-auto p-6">
         <header className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-foreground text-balance">Product Details</h1>
-          <Link
-            href="/product"
-            className="inline-flex items-center rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
-          >
+          <h1 className="text-2xl font-semibold">Product Details</h1>
+          <Link href="/product" className="rounded-md border px-4 py-2 text-sm">
             Back to Products
           </Link>
         </header>
 
-        <div className="rounded-lg border border-border p-6">
-          <p className="text-destructive">Failed to load product details. Status: {status}</p>
-          <p className="text-muted-foreground mt-2">Please try again or go back to the products list.</p>
+        <div className="rounded-lg border p-6">
+          <p className="text-destructive">
+            Failed to load product details. Status: {status}
+          </p>
         </div>
       </main>
     )
   }
 
-  if (!item) {
-    return (
-      <main className="container mx-auto p-6">
-        <header className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-foreground text-balance">Product Details</h1>
-          <Link
-            href="/product"
-            className="inline-flex items-center rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
-          >
-            Back to Products
-          </Link>
-        </header>
+  /* ---------- BASIC FIELDS ---------- */
 
-        <div className="rounded-lg border border-border p-6">
-          <p className="text-muted-foreground">No details found for this product.</p>
-        </div>
-      </main>
-    )
-  }
+  const image =
+    item.imageUrl ?? item.image ?? item.thumbnail ?? null
 
-  const name = item.name ?? item.title ?? "Untitled Product"
-  const description = item.description ?? item.details ?? "No description available."
   const price = item.price ?? item.cost ?? null
   const stock = item.stock ?? item.quantity ?? null
-  const image = item.imageUrl ?? item.image ?? item.thumbnail ?? null
+
+  /* ----------------------------------
+     RENDER
+  ---------------------------------- */
 
   return (
     <main className="container mx-auto p-6">
       <header className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-foreground text-balance">{name}</h1>
+        <h1 className="text-2xl font-semibold text-balance">
+          {getLangValue(item.name, "en")}
+        </h1>
         <Link
           href="/product"
-          className="inline-flex items-center rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
-          aria-label="Back to Products"
+          className="rounded-md border px-4 py-2 text-sm"
         >
           Back to Products
         </Link>
       </header>
 
       <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="rounded-lg border border-border p-4">
+        {/* IMAGE */}
+        <div className="rounded-lg border p-4">
           {image ? (
             <img
-              src={image || "/placeholder.svg"}
-              alt={`${name} image`}
-              className="h-auto w-full rounded-md object-cover"
+              src={image}
+              alt="Product image"
+              className="w-full rounded-md object-cover"
             />
           ) : (
-            <div className="flex h-64 w-full items-center justify-center rounded-md bg-muted text-muted-foreground">
+            <div className="flex h-64 items-center justify-center bg-muted text-muted-foreground">
               No Image
             </div>
           )}
         </div>
 
-        <div className="rounded-lg border border-border p-6 flex flex-col gap-4">
-          <div>
-            <h2 className="text-xl font-semibold text-foreground">Overview</h2>
-            <p className="mt-2 text-pretty leading-relaxed text-foreground/80">{description}</p>
+        {/* DETAILS */}
+        <div className="rounded-lg border p-6 flex flex-col gap-6">
+          {/* PRICE + STOCK */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-md border p-4">
+              <div className="text-sm text-muted-foreground">Price</div>
+              <div className="mt-1 text-lg font-medium">
+                {price != null ? `₹ ${price}` : "—"}
+              </div>
+            </div>
+
+            <div className="rounded-md border p-4">
+              <div className="text-sm text-muted-foreground">Stock</div>
+              <div className="mt-1 text-lg font-medium">
+                {stock != null ? stock : "—"}
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-md border border-border p-4">
-              <div className="text-sm text-muted-foreground">Price</div>
-              <div className="mt-1 text-lg font-medium text-foreground">{price != null ? `₹ ${price}` : "—"}</div>
-            </div>
+          {/* 🌍 ALL LANG CONTENT */}
+          <div className="space-y-6">
+            {LANGS.map(({ key, label }) => (
+              <div key={key} className="rounded-md border p-4">
+                <h3 className="text-sm font-semibold uppercase text-muted-foreground">
+                  {label}
+                </h3>
 
-            <div className="rounded-md border border-border p-4">
-              <div className="text-sm text-muted-foreground">Stock</div>
-              <div className="mt-1 text-lg font-medium text-foreground">{stock != null ? stock : "—"}</div>
-            </div>
+                <div className="mt-3 space-y-2">
+                  <div>
+                    <div className="text-xs text-muted-foreground">
+                      Title ({key})
+                    </div>
+                    <div className="font-medium">
+                      {getLangValue(item.name, key)}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-muted-foreground">
+                      Description ({key})
+                    </div>
+                    <p className="text-sm leading-relaxed text-foreground/80">
+                      {getLangValue(item.description, key)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className="pt-2 text-sm text-muted-foreground">
